@@ -1,3 +1,4 @@
+'''
 # PACMAN
 ### by Iuri Igarashi
 <p>Pequeno jogo pacman feito em C usando a IDE CodeBlocks.</p>
@@ -9,3 +10,4 @@
   <li>A - Esquerda</li>
   <li>D - Direita</li>
 </ul>
+'''
