@@ -4,7 +4,8 @@ int collision_wall_check(Game* g, int i, int j)
 {
     //맵이 배열안에 사용되어있으므로, 배열의 범위를 넘어갈 경우 에러를 알려줍니다.
     if(i < 0 || i > CELL_SIZE-1 || j < 0 || j > CELL_SIZE-1)
-        return 0;
+        printf("OutOfArrayIndex error\n");
+	return 0;
 
     //예정된 위치가 벽인 경우에는 1을 반환합니다.
     if(g->MAP.dados[i][j] == WALL)
