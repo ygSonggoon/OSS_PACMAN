@@ -27,7 +27,7 @@ C        if(g->pacman.i < 0)
             g->pacman.j = 0;
     }
 
-    //a키 조정시
+    //a 조정시
     else if(g->pacman.direction == LEFT_MOVE && !collision_wall_check(g, g->pacman.i, g->pacman.j-1))
     {
         g->pacman.j--;
