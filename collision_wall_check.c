@@ -1,3 +1,5 @@
+#include "header.h"
+
 ///해당 함수는 팩맨/적이 움직이기 전에 예정된 위치가 벽인지 확인하는 기능을 합니다.
 //그러므로 매개변수는 사전에 계산된 값이 사용됩니다.
 int collision_wall_check(Game* g, int i, int j)
