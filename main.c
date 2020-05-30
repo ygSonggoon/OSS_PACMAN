@@ -4,148 +4,145 @@
 #include <windows.h>
 #include <time.h>
 
-#define TAM 13
-#define PAREDE 'X'
-#define CHAO ' '
-#define CIMA 'w'
-#define BAIXO 's'
-#define ESQUERDA 'a'
-#define DIREITA 'd'
-#define PARADO 'p'
-#define MOVIMENTO 'm'
+#define CELL_SIZE 13
+#define WALL 'X'
+#define BLANK ' '
+#define UP_MOVE 'w'
+#define DOWN_MOVE 's'
+#define LEFT_MOVE 'a'
+#define RIGHT_MOVE 'd'
+#define PAUSE 'p'
+#define MOVE_STATUS 'm'
+#define ENEMY_NUMBERS 4
 
-typedef struct map
+typedef struct Map
 {
-    char dados[TAM][TAM];
-} Mapa;
+    char MAP[CELL_SIZE][CELL_SIZE];
+} Map;
 
-typedef struct pacman
+typedef struct Pacman
 {
-    int i, j;
+    int pacman_vertical, pacman_horizontal;
     char direction;
-} Player;
+} Pacman;
 
-typedef struct enemy
+typedef struct Enemy
 {
     int i, j;
     char direction;
 } Enemy;
 
-typedef struct coin
+typedef struct Coin
 {
     int i, j;
 } Coin;
 
-typedef struct jogo
+typedef struct Game
 {
-    Mapa mapa;
-    Player pacman;
+    Map map;
+    Pacman pacman;
+    Coin coins[CELL_SIZE*CELL_SIZE];
+    Enemy enemies[CELL_SIZE*CELL_SIZE];
+
     unsigned int score;
-    Coin coins[TAM*TAM];
-    Enemy enemies[TAM*TAM];
     unsigned int total_coin_number;
     unsigned short int lifes;
     short int enemies_movement;
-} Jogo;
+} Game;
 
-void init_game(Jogo* g)
+void init_game(Game* game_data)
 {
     srand(time(NULL));
-    int total_enemies = 4;
-    int e = 0;
-    int x=0, y=0;
-    char ch;
-    //inicializa jogador
-    g->pacman.i = TAM/2;
-    g->pacman.j = TAM/2;
-    g->pacman.direction = PARADO;
-    //inicializa mapa
-    /*for(int i=0; i< TAM; i++){
-        for(int j=0; j < TAM; j++){
-            if(i == 0 || j == 0 || i == TAM-1 || j == TAM-1){
-                g->mapa.dados[i][j] = PAREDE;
-            }else if(g->pacman.i != i || g->pacman.j != j){
-                g->mapa.dados[i][j] = CHAO;
-                g->coins[e].i = i;
-                g->coins[e].j = j;
-                e++;
-            }else{
-                g->mapa.dados[i][j] = CHAO;
-            }
-        }
-    }*/
-    //arquivo MAPA.TXT
-    FILE *arquivo;
-    arquivo = fopen("mapa.txt", "r");
 
-    //Leitura do arquivo MAPA.TXT
-    if(arquivo == NULL)
+    //°ÔÀÓ ÃÊ±âÈ­¸¦ À§ÇÑ º¯¼ö ¼±¾ð ºÎºÐÀÔ´Ï´Ù
+    int ingame_coin_numbers = 0, ingame_enemy_numbers = 0;
+    int map_vertical = 0, map_horizontal = 0;
+    int random_setting_value;
+    char map_file_cell_value;
+
+    //ÆÑ¸Ç À§Ä¡ ¸Ê Áß¾ÓÀ¸·Î ÃÊ±âÈ­ ÇÏ´Â ºÎºÐÀÔ´Ï´Ù
+    game_data->pacman.pacman_vertical = CELL_SIZE/2;
+    game_data->pacman.pacman_horizontal = CELL_SIZE/2;
+    game_data->pacman.direction = PAUSE;
+
+    //±âÅ¸ °ÔÀÓ º¯¼ö ÃÊ±âÈ­ÀÔ´Ï´Ù
+    game_data->score = 0;
+    game_data->lifes = 3;
+    game_data->enemies_movement = PAUSE;
+
+    //¿ÜºÎ ¸Ê ÆÄÀÏÀ» ÀÐ¾î¿À±â À§ÇÑ º¯¼ö ¼±¾ðÀÔ´Ï´Ù
+    FILE *map_file;
+    map_file = fopen("mapa.txt", "r");
+
+    //¸Ê ÆÄÀÏÀ» ÀÐ¾î¿À´Â ÇÔ¼ö ºÎºÐÀÔ´Ï´Ù, read_map.c ÆÄÀÏ·Î ºÐ·ù ÇÒ ¼ö ÀÖÀ» °Í °°½À´Ï´Ù
+    if(map_file == NULL)
     {
-        printf("ERRO: não foi possivel abrir mapa.txt\n");
+        printf("°æ°í! ¸Ê ÆÄÀÏ ¾øÀ½!\n");
         exit(1);
     }
     else
     {
-        while( (ch = fgetc(arquivo))!= EOF )
+        while( (map_file_cell_value = fgetc(map_file))!= EOF )
         {
-            if(ch != '\n')
+            if(map_file_cell_value != '\n')
             {
-                g->mapa.dados[x][y] = ch;
-                y++;
+                //¿©±â¼­ ¸Ê ÆÄÀÏÀ» ÀÐ¾î¿Ã ¶§ ¸Ê¿¡ º®°ú ±æÀÌ ¼³Á¤ÀÌ ¹Ì¸® µË´Ï´Ù
+                game_data->map.MAP[map_vertical][map_horizontal] = map_file_cell_value;
+                map_horizontal++;
             }
             else
             {
-                y=0;
-                x++;
+                map_horizontal = 0;
+                map_vertical++;
             }
         }
-        fclose(arquivo);
+        fclose(map_file);
     }
 
-    int rdm, e2 = 0;
-    for(int i=0; i< TAM; i++)
+    //¸Ê ÆÄÀÏ ÀÐ¾î¿À°í ³­ ÈÄ ³ª¸ÓÁö Á¤º¸µéÀ» ¸Ê¿¡ ÀÔ·ÂÇØÁÖ´Â ¹Ýº¹¹® ºÎºÐÀÔ´Ï´Ù, ÀÌ°÷µµ map_setting.c ÆÄÀÏ·Î ºÐ·ù ÇÒ ¼ö ÀÖÀ» °Í °°½À´Ï´Ù
+    for (map_vertical = 0; map_vertical < CELL_SIZE; map_vertical++)
     {
-        for(int j=0; j < TAM; j++)
+        for (map_horizontal = 0; map_horizontal < CELL_SIZE; map_horizontal++)
         {
-            if((g->pacman.i != i || g->pacman.j != j) && g->mapa.dados[i][j] != PAREDE)
+            if ((game_data->pacman.pacman_vertical != map_vertical || game_data->pacman.pacman_horizontal != map_horizontal) && game_data->map.MAP[map_vertical][map_horizontal] != WALL)
             {
-                g->mapa.dados[i][j] = CHAO;
-                g->coins[e].i = i;
-                g->coins[e].j = j;
-                e++;
-            }
-            if((rdm = rand()%15) < 1 && ((g->pacman.i != i || g->pacman.j != j) && g->mapa.dados[i][j] != PAREDE) && e2 < total_enemies)
-            {
-                g->mapa.dados[i][j] = CHAO;
-                g->enemies[e2].i = i;
-                g->enemies[e2].j = j;
-                e2++;
+                game_data->map.MAP[map_vertical][map_horizontal] = BLANK;
+
+                if ((random_setting_value = rand() % 15) < 1 && ingame_enemy_numbers < ENEMY_NUMBERS)
+                {
+                    game_data->enemies[ingame_enemy_numbers].i = map_vertical;
+                    game_data->enemies[ingame_enemy_numbers].j = map_horizontal;
+                    ingame_enemy_numbers++;
+                }
+
+                game_data->coins[ingame_coin_numbers].i = map_vertical;
+                game_data->coins[ingame_coin_numbers].j = map_horizontal;
+                ingame_coin_numbers++;
             }
         }
     }
 
-    //inicializa entidades
-    for(int i = e+1; i < TAM*TAM; i++)
+    //ÄÚÀÎ°ú Àû ¹è¿­ ÃÊ°úµÈ ºÎºÐ ÃÊ±âÈ­ ÇÏ´Â ºÎºÐÀÔ´Ï´Ù, ³¶ºñµÇ´Â ºÎºÐÀÌ¹Ç·Î ÇØ°áÇØ¾ß ÇÕ´Ï´Ù
+    for(int i = ingame_coin_numbers+1; i < CELL_SIZE*CELL_SIZE; i++)
     {
-        g->coins[i].i = -1;
-        g->coins[i].j = -1;
+        game_data->coins[i].i = -1;
+        game_data->coins[i].j = -1;
     }
-    for(int i = e2+1; i < TAM*TAM; i++)
+    //Àû ¹è¿­Àº À§Ä¡ °íÁ¤À¸·Î ÇØ°á ÇÒ ¼ö ÀÖÀ» µí ÇÕ´Ï´Ù
+    for(int i = ingame_enemy_numbers+1; i < CELL_SIZE*CELL_SIZE; i++)
     {
-        g->enemies[i].i = -1;
-        g->enemies[i].j = -1;
-        g->enemies[i].direction = PARADO;
+        game_data->enemies[i].i = -1;
+        game_data->enemies[i].j = -1;
+        game_data->enemies[i].direction = PAUSE;
     }
-    //inicializa score
-    g->score = 0;
-    g->total_coin_number = e;
-    g->lifes = 3;
-    g->enemies_movement = PARADO;
+
+    //¸¶Áö¸·À¸·Î ¸Ê ³»ºÎ ÀüÃ¼ µ¿Àü °¹¼ö¸¦ °ÔÀÓ µ¥ÀÌÅÍ¿¡ ÀÔ·ÂÇØÁÝ´Ï´Ù
+    game_data->total_coin_number = ingame_coin_numbers;
 }
 
-int has_coin_in_pos(Jogo* g, int i, int j)
+int has_coin_in_pos(Game* g, int i, int j)
 {
-    for(int k=0; k < TAM*TAM; k++)
+    for(int k=0; k < CELL_SIZE*CELL_SIZE; k++)
     {
         if(g->coins[k].i == i && g->coins[k].j == j)
             return k;
@@ -153,9 +150,9 @@ int has_coin_in_pos(Jogo* g, int i, int j)
     return -1;
 }
 
-int has_enemy_in_pos(Jogo* g, int i, int j)
+int has_enemy_in_pos(Game* g, int i, int j)
 {
-    for(int k=0; k < TAM*TAM; k++)
+    for(int k=0; k < CELL_SIZE*CELL_SIZE; k++)
     {
         if(g->enemies[k].i == i && g->enemies[k].j == j)
             return k;
@@ -163,12 +160,12 @@ int has_enemy_in_pos(Jogo* g, int i, int j)
     return -1;
 }
 
-void init_enemies(Jogo* g)
+void init_enemies(Game* g)
 {
-    g->enemies_movement = MOVIMENTO;
+    g->enemies_movement = MOVE_STATUS;
 }
 
-void collision_coin_check(Jogo* g, int i, int j)
+void collision_coin_check(Game* g, int i, int j)
 {
     int k;
     k = has_coin_in_pos(g, i, j);
@@ -181,7 +178,7 @@ void collision_coin_check(Jogo* g, int i, int j)
     }
 }
 
-void collision_enemy_check(Jogo* g, int i, int j)
+void collision_enemy_check(Game* g, int i, int j)
 {
     int k;
     k = has_enemy_in_pos(g, i, j);
@@ -190,23 +187,23 @@ void collision_enemy_check(Jogo* g, int i, int j)
         g->coins[k].i = -99;
         g->coins[k].j = -99;
         g->lifes--;
-        g->pacman.i = TAM/2;
-        g->pacman.j = TAM/2;
-        g->pacman.direction = PARADO;
-        g->enemies_movement = PARADO;
+        g->pacman.pacman_vertical = CELL_SIZE/2;
+        g->pacman.pacman_horizontal = CELL_SIZE/2;
+        g->pacman.direction = PAUSE;
+        g->enemies_movement = PAUSE;
     }
 }
 
-void draw_scene(Jogo* g)
+void draw_scene(Game* g)
 {
     int k, l;
-    for(int i=0; i< TAM; i++)
+    for(int i=0; i< CELL_SIZE; i++)
     {
-        for(int j=0; j < TAM; j++)
+        for(int j=0; j < CELL_SIZE; j++)
         {
             k = has_coin_in_pos(g, i, j);
             l = has_enemy_in_pos(g, i, j);
-            if(g->mapa.dados[i][j] == PAREDE)
+            if(g->map.MAP[i][j] == WALL)
             {
                 textbackground(RED);
                 printf("  ");
@@ -228,7 +225,7 @@ void draw_scene(Jogo* g)
                 textcolor(WHITE);
                 textbackground(BLACK);
             }
-            else if(g->pacman.i == i && g->pacman.j == j)
+            else if(g->pacman.pacman_vertical == i && g->pacman.pacman_horizontal == j)
             {
                 textbackground(BLACK);
                 textcolor(WHITE);
@@ -249,22 +246,22 @@ void draw_scene(Jogo* g)
     }
 }
 
-int collision_wall_check(Jogo* g, int i, int j)
+int collision_wall_check(Game* g, int i, int j)
 {
-    if(i < 0 || i > TAM-1 || j < 0 || j > TAM-1)
+    if(i < 0 || i > CELL_SIZE-1 || j < 0 || j > CELL_SIZE-1)
         return 0;
-    if(g->mapa.dados[i][j] == PAREDE)
+    if(g->map.MAP[i][j] == WALL)
         return 1;
     return 0;
 }
 
-void move_enemies(Jogo* g)
+void move_enemies(Game* g)
 {
 
     int rdm;
-    if(g->enemies_movement != PARADO)
+    if(g->enemies_movement != PAUSE)
     {
-        for(int k=0; k < TAM*TAM; k++)
+        for(int k=0; k < CELL_SIZE*CELL_SIZE; k++)
         {
             rdm = (rand()%3)-1;
             if(g->enemies[k].i >= 0)
@@ -272,8 +269,8 @@ void move_enemies(Jogo* g)
                 if(!collision_wall_check(g, g->enemies[k].i + rdm, g->enemies[k].j)){
                     g->enemies[k].i += rdm;
                     if(g->enemies[k].i < 0)
-                        g->enemies[k].i = TAM-1;
-                    if(g->enemies[k].i > TAM-1)
+                        g->enemies[k].i = CELL_SIZE-1;
+                    if(g->enemies[k].i > CELL_SIZE-1)
                         g->enemies[k].i = 0;
                 }
             }
@@ -286,8 +283,8 @@ void move_enemies(Jogo* g)
                     if(!collision_wall_check(g, g->enemies[k].i, g->enemies[k].j + rdm)){
                         g->enemies[k].j += rdm;
                         if(g->enemies[k].j < 0)
-                            g->enemies[k].j = TAM-1;
-                        if(g->enemies[k].j > TAM-1)
+                            g->enemies[k].j = CELL_SIZE-1;
+                        if(g->enemies[k].j > CELL_SIZE-1)
                             g->enemies[k].j = 0;
                     }
                 }
@@ -296,49 +293,49 @@ void move_enemies(Jogo* g)
     }
 }
 
-void move_pacman(Jogo* g)
+void move_pacman(Game* g)
 {
-    if(g->pacman.direction == CIMA && !collision_wall_check(g, g->pacman.i-1, g->pacman.j))
+    if(g->pacman.direction == UP_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical-1, g->pacman.pacman_horizontal))
     {
-        g->pacman.i--;
-        if(g->pacman.i < 0)
-            g->pacman.i = TAM-1;
+        g->pacman.pacman_vertical--;
+        if(g->pacman.pacman_vertical < 0)
+            g->pacman.pacman_vertical = CELL_SIZE-1;
     }
-    else if(g->pacman.direction == BAIXO && !collision_wall_check(g, g->pacman.i+1, g->pacman.j))
+    else if(g->pacman.direction == DOWN_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical+1, g->pacman.pacman_horizontal))
     {
-        g->pacman.i++;
-        if(g->pacman.i > TAM-1)
-            g->pacman.i = 0;
+        g->pacman.pacman_vertical++;
+        if(g->pacman.pacman_vertical > CELL_SIZE-1)
+            g->pacman.pacman_vertical = 0;
     }
-    else if(g->pacman.direction == DIREITA && !collision_wall_check(g, g->pacman.i, g->pacman.j+1))
+    else if(g->pacman.direction == RIGHT_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical, g->pacman.pacman_horizontal+1))
     {
-        g->pacman.j++;
-        if(g->pacman.j > TAM-1)
-            g->pacman.j = 0;
+        g->pacman.pacman_horizontal++;
+        if(g->pacman.pacman_horizontal > CELL_SIZE-1)
+            g->pacman.pacman_horizontal = 0;
     }
-    else if(g->pacman.direction == ESQUERDA && !collision_wall_check(g, g->pacman.i, g->pacman.j-1))
+    else if(g->pacman.direction == LEFT_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical, g->pacman.pacman_horizontal-1))
     {
-        g->pacman.j--;
-        if(g->pacman.j < 0)
-            g->pacman.j = TAM-1;
+        g->pacman.pacman_horizontal--;
+        if(g->pacman.pacman_horizontal < 0)
+            g->pacman.pacman_horizontal = CELL_SIZE-1;
     }
 }
 
-void change_direction(Jogo* g, char c)
+void change_direction(Game* g, char c)
 {
-    if(c == CIMA)
-        g->pacman.direction = CIMA;
-    else if(c == BAIXO)
-        g->pacman.direction = BAIXO;
-    else if(c == DIREITA)
-        g->pacman.direction = DIREITA;
-    else if(c == ESQUERDA)
-        g->pacman.direction = ESQUERDA;
+    if(c == UP_MOVE)
+        g->pacman.direction = UP_MOVE;
+    else if(c == DOWN_MOVE)
+        g->pacman.direction = DOWN_MOVE;
+    else if(c == RIGHT_MOVE)
+        g->pacman.direction = RIGHT_MOVE;
+    else if(c == LEFT_MOVE)
+        g->pacman.direction = LEFT_MOVE;
 }
 
 int main()
 {
-    Jogo j;
+    Game j;
     init_game(&j);
     int jogando = 1;
     char c = 'v';
@@ -354,8 +351,8 @@ int main()
             init_enemies(&j);
         }
         move_pacman(&j);
-        collision_coin_check(&j, j.pacman.i, j.pacman.j);
-        collision_enemy_check(&j, j.pacman.i, j.pacman.j);
+        collision_coin_check(&j, j.pacman.pacman_vertical, j.pacman.pacman_horizontal);
+        collision_enemy_check(&j, j.pacman.pacman_vertical, j.pacman.pacman_horizontal);
         draw_scene(&j);
         move_enemies(&j);
         printf("Score: %d\nLifes: %d\n", j.score, j.lifes);
