@@ -21,7 +21,7 @@ void DrawScene(Game* game)
 			{
 				// 길 출력
                 textbackground(RED);
-				printf("  ");
+				PrintScene(y_position, x_position, "  ");
                 textbackground(BLACK);
 			}
 			else if (current_enemy_number >= 0)
@@ -29,7 +29,7 @@ void DrawScene(Game* game)
 				// 적 출력
                 textbackground(BLACK);
                 textcolor(LIGHTBLUE);
-				printf("o ");
+                PrintScene(y_position, x_position, "o ");
                 textcolor(WHITE);
                 textbackground(BLACK);
 			}
@@ -38,7 +38,7 @@ void DrawScene(Game* game)
 				// 코인 출력
                 textbackground(BLACK);
                 textcolor(YELLOW);
-				printf(". ");
+                PrintScene(y_position, x_position, ". ");
                 textcolor(WHITE);
                 textbackground(BLACK);
 			}
@@ -47,7 +47,7 @@ void DrawScene(Game* game)
 				//플레이어 출력
                 textbackground(BLACK);
                 textcolor(WHITE);
-				printf("o ");
+                PrintScene(y_position, x_position, "o ");
                 textcolor(WHITE);
                 textbackground(BLACK);
 			}
@@ -56,11 +56,12 @@ void DrawScene(Game* game)
 				// 벽 출력
                 textbackground(BLACK);
                 textcolor(WHITE);
-				printf("  ");
+				PrintScene(y_position, x_position, "  ");
                 textcolor(WHITE);
                 textbackground(BLACK);
 			}
 		}
 		printf("\n");
 	}
+
 }

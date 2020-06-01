@@ -49,13 +49,19 @@ typedef struct Game
 	short int enemyMovement; //적 움직임 변수
 } Game; // Game Manager 구조체라 생각됨
 
-
+// 충돌 처리 함수
 void CheckCoinCollision(Game* game, int y_position, int x_position);
 void CheckEnemyCollision(Game* game, int y_position, int x_position);
-
-
-
+// 현재 좌표의 오브젝트 구분 함수
 int HasCoinInPosition(Game *game, int x_position, int y_position);
 int HasEnemyInPosition(Game *game,int x_position, int y_position);
+// 화면 관련 함수
+void RenderingPipeline(Game *game); //렌더링 하는 과정을 총괄하는 함수.
 
-void DrawScene(Game* game);
+void InitScene(); //화면 초기화 함수.
+void FlipScene(); //화면 바꾸어 줄 함수.
+void ClearScene(); //화면을 지워줄 함수.
+void ReleaseScene(); //프로그램 종료 시 화면을 삭제하는 함수.
+void PrintScene(int y_position, int x_position, char* print_data);
+
+void DrawScene(Game* game); //실제 렌더링 함수.

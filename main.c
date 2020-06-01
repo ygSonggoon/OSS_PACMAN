@@ -1,369 +1,220 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <conio2.h>
-#include <windows.h>
-#include <time.h>
+#include "Header.h"
 
-#define TAM 13
-#define PAREDE 'X'
-#define CHAO ' '
-#define CIMA 'w'
-#define BAIXO 's'
-#define ESQUERDA 'a'
-#define DIREITA 'd'
-#define PARADO 'p'
-#define MOVIMENTO 'm'
+//변수 스타일: 언더바 사용, 구조체 바꾸고[대문자 시작], 축약없이.
+//함수 스타일: 대문자 동사시작 목적은 명사.
 
-typedef struct map
+void InitGame(Game* game) // 게임 Initialize
 {
-    char dados[TAM][TAM];
-} Mapa;
+    InitScene();
 
-typedef struct pacman
-{
-    int i, j;
-    char direction;
-} Player;
+	srand((unsigned int)time(NULL));
+	int total_enemies = 4; // 적 갯수
+	int e = 0;
+	int x = 0, y = 0;
+	char ch;
 
-typedef struct enemy
-{
-    int i, j;
-    char direction;
-} Enemy;
+	game->pacman.i = MAPSIZE / 2;
+	game->pacman.j = MAPSIZE / 2;
+	//플레이어 정 중앙에 생성
+	game->pacman.direction = DEACTIVE;
+	//플레이어 생성 후 움직임 X 인 상태로 세팅
 
-typedef struct coin
-{
-    int i, j;
-} Coin;
+	//맵 데이터 파일 읽어오기
+	FILE *archive;
+	archive = fopen("map.txt", "r");
 
-typedef struct jogo
-{
-    Mapa mapa;
-    Player pacman;
-    unsigned int score;
-    Coin coins[TAM*TAM];
-    Enemy enemies[TAM*TAM];
-    unsigned int total_coin_number;
-    unsigned short int lifes;
-    short int enemies_movement;
-} Jogo;
+	//맵 데이터 txt 파일이 없을 때
+	if (archive == NULL)
+	{
+		printf("ERROR! PLEASE CHECK MAP DATAFILE\n");
+		exit(1);
+	}
+	else
+	{
+		while ((ch = fgetc(archive)) != EOF)
+		{
+			if (ch != '\n')
+			{
+				game->map.mapData[x][y] = ch;
+				y++;
+			}
+			else
+			{
+				y = 0;
+				x++;
+			}
+		}
+		fclose(archive);
+	}
 
-void init_game(Jogo* g)
-{
-    srand(time(NULL));
-    int total_enemies = 4;
-    int e = 0;
-    int x=0, y=0;
-    char ch;
-    //inicializa jogador
-    g->pacman.i = TAM/2;
-    g->pacman.j = TAM/2;
-    g->pacman.direction = PARADO;
-    //inicializa mapa
-    /*for(int i=0; i< TAM; i++){
-        for(int j=0; j < TAM; j++){
-            if(i == 0 || j == 0 || i == TAM-1 || j == TAM-1){
-                g->mapa.dados[i][j] = PAREDE;
-            }else if(g->pacman.i != i || g->pacman.j != j){
-                g->mapa.dados[i][j] = CHAO;
-                g->coins[e].i = i;
-                g->coins[e].j = j;
-                e++;
-            }else{
-                g->mapa.dados[i][j] = CHAO;
-            }
-        }
-    }*/
-    //arquivo MAPA.TXT
-    FILE *arquivo;
-    arquivo = fopen("mapa.txt", "r");
+	int rdm, e2 = 0;
+	for (int i = 0; i < MAPSIZE; i++)
+	{
+		for (int j = 0; j < MAPSIZE; j++)
+		{
+			if ((game->pacman.i != i || game->pacman.j != j) && game->map.mapData[i][j] != WALL)
+			{
+				game->map.mapData[i][j] = ROAD;
+				game->coins[e].i = i;
+				game->coins[e].j = j;
+				e++;
+			}
+			if ((rdm = rand() % 15) < 1 && ((game->pacman.i != i || game->pacman.j != j) && game->map.mapData[i][j] != WALL) && e2 < total_enemies)
+			{
+				game->map.mapData[i][j] = ROAD;
+				game->enemies[e2].i = i;
+				game->enemies[e2].j = j;
+				e2++;
+			}
+		}
+	}
 
-    //Leitura do arquivo MAPA.TXT
-    if(arquivo == NULL)
-    {
-        printf("ERRO: n�o foi possivel abrir mapa.txt\n");
-        exit(1);
-    }
-    else
-    {
-        while( (ch = fgetc(arquivo))!= EOF )
-        {
-            if(ch != '\n')
-            {
-                g->mapa.dados[x][y] = ch;
-                y++;
-            }
-            else
-            {
-                y=0;
-                x++;
-            }
-        }
-        fclose(arquivo);
-    }
-
-    int rdm, e2 = 0;
-    for(int i=0; i< TAM; i++)
-    {
-        for(int j=0; j < TAM; j++)
-        {
-            if((g->pacman.i != i || g->pacman.j != j) && g->mapa.dados[i][j] != PAREDE)
-            {
-                g->mapa.dados[i][j] = CHAO;
-                g->coins[e].i = i;
-                g->coins[e].j = j;
-                e++;
-            }
-            if((rdm = rand()%15) < 1 && ((g->pacman.i != i || g->pacman.j != j) && g->mapa.dados[i][j] != PAREDE) && e2 < total_enemies)
-            {
-                g->mapa.dados[i][j] = CHAO;
-                g->enemies[e2].i = i;
-                g->enemies[e2].j = j;
-                e2++;
-            }
-        }
-    }
-
-    //inicializa entidades
-    for(int i = e+1; i < TAM*TAM; i++)
-    {
-        g->coins[i].i = -1;
-        g->coins[i].j = -1;
-    }
-    for(int i = e2+1; i < TAM*TAM; i++)
-    {
-        g->enemies[i].i = -1;
-        g->enemies[i].j = -1;
-        g->enemies[i].direction = PARADO;
-    }
-    //inicializa score
-    g->score = 0;
-    g->total_coin_number = e;
-    g->lifes = 3;
-    g->enemies_movement = PARADO;
+	//inicializa entidades
+	for (int i = e + 1; i < MAPSIZE*MAPSIZE; i++)
+	{
+		game->coins[i].i = -1;
+		game->coins[i].j = -1;
+	}
+	for (int i = e2 + 1; i < MAPSIZE*MAPSIZE; i++)
+	{
+		game->enemies[i].i = -1;
+		game->enemies[i].j = -1;
+		game->enemies[i].direction = DEACTIVE;
+	}
+	//inicializa score
+	game->score = 0;
+	game->total_coins_number = e;
+	game->life = 3;
+	game->enemyMovement = DEACTIVE;
 }
 
-int has_coin_in_pos(Jogo* g, int i, int j)
+void InitEnemy(Game *game)
 {
-    for(int k=0; k < TAM*TAM; k++)
-    {
-        if(g->coins[k].i == i && g->coins[k].j == j)
-            return k;
-    }
-    return -1;
+    game->enemyMovement = ACTIVE;
 }
 
-int has_enemy_in_pos(Jogo* g, int i, int j)
+int CollisionWallCheck(Game* game, int i, int j)
 {
-    for(int k=0; k < TAM*TAM; k++)
-    {
-        if(g->enemies[k].i == i && g->enemies[k].j == j)
-            return k;
-    }
-    return -1;
+	if (i < 0 || i > MAPSIZE - 1 || j < 0 || j > MAPSIZE - 1)
+		return 0;
+	if (game->map.mapData[i][j] == WALL)
+		return 1;
+	return 0;
 }
 
-void init_enemies(Jogo* g)
+void MoveEnemy(Game* game)
 {
-    g->enemies_movement = MOVIMENTO;
+	int rdm;
+	if (game->enemyMovement != DEACTIVE)
+	{
+		for (int k = 0; k < MAPSIZE*MAPSIZE; k++)
+		{
+			rdm = (rand() % 3) - 1;
+			if (game->enemies[k].i >= 0)
+			{
+				if (!CollisionWallCheck(game, game->enemies[k].i + rdm, game->enemies[k].j))
+				{
+					game->enemies[k].i += rdm;
+					if (game->enemies[k].i < 0)
+						game->enemies[k].i = MAPSIZE - 1;
+					if (game->enemies[k].i > MAPSIZE - 1)
+						game->enemies[k].i = 0;
+				}
+			}
+
+			if (rdm == 0)
+			{
+				rdm = (rand() % 3) - 1;
+				if (game->enemies[k].j >= 0)
+				{
+					if (!CollisionWallCheck(game, game->enemies[k].i, game->enemies[k].j + rdm))
+					{
+						game->enemies[k].j += rdm;
+						if (game->enemies[k].j < 0)
+							game->enemies[k].j = MAPSIZE - 1;
+						if (game->enemies[k].j > MAPSIZE - 1)
+							game->enemies[k].j = 0;
+					}
+				}
+			}
+		}
+	}
 }
 
-void collision_coin_check(Jogo* g, int i, int j)
+void MovePacman(Game* game)
 {
-    int k;
-    k = has_coin_in_pos(g, i, j);
-    if(k >= 0)
-    {
-        g->coins[k].i = -1;
-        g->coins[k].j = -1;
-        g->score += 10;
-        g->total_coin_number--;
-    }
+	if (game->pacman.direction == UP && !CollisionWallCheck(game, game->pacman.i - 1, game->pacman.j))
+	{
+		game->pacman.i--;
+		if (game->pacman.i < 0)
+			game->pacman.i = MAPSIZE - 1;
+	}
+	else if (game->pacman.direction == DOWN && !CollisionWallCheck(game, game->pacman.i + 1, game->pacman.j))
+	{
+		game->pacman.i++;
+		if (game->pacman.i > MAPSIZE - 1)
+			game->pacman.i = 0;
+	}
+	else if (game->pacman.direction == RIGHT && !CollisionWallCheck(game, game->pacman.i, game->pacman.j + 1))
+	{
+		game->pacman.j++;
+		if (game->pacman.j > MAPSIZE - 1)
+			game->pacman.j = 0;
+	}
+	else if (game->pacman.direction == LEFT && !CollisionWallCheck(game, game->pacman.i, game->pacman.j - 1))
+	{
+		game->pacman.j--;
+		if (game->pacman.j < 0)
+			game->pacman.j = MAPSIZE - 1;
+	}
 }
 
-void collision_enemy_check(Jogo* g, int i, int j)
+void ChangeDirection(Game* game, char c)
 {
-    int k;
-    k = has_enemy_in_pos(g, i, j);
-    if(k >= 0)
-    {
-        g->coins[k].i = -99;
-        g->coins[k].j = -99;
-        g->lifes--;
-        g->pacman.i = TAM/2;
-        g->pacman.j = TAM/2;
-        g->pacman.direction = PARADO;
-        g->enemies_movement = PARADO;
-    }
-}
-
-void draw_scene(Jogo* g)
-{
-    int k, l;
-    for(int i=0; i< TAM; i++)
-    {
-        for(int j=0; j < TAM; j++)
-        {
-            k = has_coin_in_pos(g, i, j);
-            l = has_enemy_in_pos(g, i, j);
-            if(g->mapa.dados[i][j] == PAREDE)
-            {
-                textbackground(RED);
-                printf("  ");
-                textbackground(BLACK);
-            }
-            else if(l >= 0)
-            {
-                textbackground(BLACK);
-                textcolor(LIGHTBLUE);
-                printf("o ");
-                textcolor(WHITE);
-                textbackground(BLACK);
-            }
-            else if(k >= 0)
-            {
-                textbackground(BLACK);
-                textcolor(YELLOW);
-                printf(". ");
-                textcolor(WHITE);
-                textbackground(BLACK);
-            }
-            else if(g->pacman.i == i && g->pacman.j == j)
-            {
-                textbackground(BLACK);
-                textcolor(WHITE);
-                printf("o ");
-                textcolor(WHITE);
-                textbackground(BLACK);
-            }
-            else
-            {
-                textbackground(BLACK);
-                textcolor(WHITE);
-                printf("  ");
-                textcolor(WHITE);
-                textbackground(BLACK);
-            }
-        }
-        printf("\n");
-    }
-}
-
-int collision_wall_check(Jogo* g, int i, int j)
-{
-    if(i < 0 || i > TAM-1 || j < 0 || j > TAM-1)
-        return 0;
-    if(g->mapa.dados[i][j] == PAREDE)
-        return 1;
-    return 0;
-}
-
-void move_enemies(Jogo* g)
-{
-
-    int rdm;
-    if(g->enemies_movement != PARADO)
-    {
-        for(int k=0; k < TAM*TAM; k++)
-        {
-            rdm = (rand()%3)-1;
-            if(g->enemies[k].i >= 0)
-            {
-                if(!collision_wall_check(g, g->enemies[k].i + rdm, g->enemies[k].j)){
-                    g->enemies[k].i += rdm;
-                    if(g->enemies[k].i < 0)
-                        g->enemies[k].i = TAM-1;
-                    if(g->enemies[k].i > TAM-1)
-                        g->enemies[k].i = 0;
-                }
-            }
-
-            if(rdm == 0)
-            {
-                rdm = (rand()%3)-1;
-                if(g->enemies[k].j >= 0)
-                {
-                    if(!collision_wall_check(g, g->enemies[k].i, g->enemies[k].j + rdm)){
-                        g->enemies[k].j += rdm;
-                        if(g->enemies[k].j < 0)
-                            g->enemies[k].j = TAM-1;
-                        if(g->enemies[k].j > TAM-1)
-                            g->enemies[k].j = 0;
-                    }
-                }
-            }
-        }
-    }
-}
-
-void move_pacman(Jogo* g)
-{
-    if(g->pacman.direction == CIMA && !collision_wall_check(g, g->pacman.i-1, g->pacman.j))
-    {
-        g->pacman.i--;
-        if(g->pacman.i < 0)
-            g->pacman.i = TAM-1;
-    }
-    else if(g->pacman.direction == BAIXO && !collision_wall_check(g, g->pacman.i+1, g->pacman.j))
-    {
-        g->pacman.i++;
-        if(g->pacman.i > TAM-1)
-            g->pacman.i = 0;
-    }
-    else if(g->pacman.direction == DIREITA && !collision_wall_check(g, g->pacman.i, g->pacman.j+1))
-    {
-        g->pacman.j++;
-        if(g->pacman.j > TAM-1)
-            g->pacman.j = 0;
-    }
-    else if(g->pacman.direction == ESQUERDA && !collision_wall_check(g, g->pacman.i, g->pacman.j-1))
-    {
-        g->pacman.j--;
-        if(g->pacman.j < 0)
-            g->pacman.j = TAM-1;
-    }
-}
-
-void change_direction(Jogo* g, char c)
-{
-    if(c == CIMA)
-        g->pacman.direction = CIMA;
-    else if(c == BAIXO)
-        g->pacman.direction = BAIXO;
-    else if(c == DIREITA)
-        g->pacman.direction = DIREITA;
-    else if(c == ESQUERDA)
-        g->pacman.direction = ESQUERDA;
+	if (c == UP)
+		game->pacman.direction = UP;
+	else if (c == DOWN)
+		game->pacman.direction = DOWN;
+	else if (c == RIGHT)
+		game->pacman.direction = RIGHT;
+	else if (c == LEFT)
+		game->pacman.direction = LEFT;
 }
 
 int main()
 {
-    Jogo j;
-    init_game(&j);
-    int jogando = 1;
-    char c = 'v';
+	Game game;
+	InitGame(&game);
 
-    while(jogando)
-    {
+	int running = 1;
+	char c = 'v';
+
+	while (running)
+	{
         delay(150);
-        clrscr();
-        if(kbhit())
-        {
-            c = getch();
-            change_direction(&j, c);
-            init_enemies(&j);
-        }
-        move_pacman(&j);
-        collision_coin_check(&j, j.pacman.i, j.pacman.j);
-        collision_enemy_check(&j, j.pacman.i, j.pacman.j);
-        draw_scene(&j);
-        move_enemies(&j);
-        printf("Score: %d\nLifes: %d\n", j.score, j.lifes);
-        if(j.total_coin_number == 0 || j.lifes == 0) jogando = 0;
+		if (kbhit())
+		{
+			c = getch();
+			ChangeDirection(&game, c);
+			InitEnemy(&game);
+		}
+		MovePacman(&game);
+		CheckCoinCollision(&game, game.pacman.i, game.pacman.j);
+		CheckEnemyCollision(&game, game.pacman.i, game.pacman.j);
 
-    }
+        RenderingPipeline(&game);
 
-    printf("Game over.");
+		MoveEnemy(&game);
 
-    return 0;
+		//printf("Score: %d\nLifes: %d\n", game.score, game.life);
+
+		if (game.total_coins_number == 0 || game.life == 0)
+			running = 0;
+	}
+
+	printf("Game over.");
+
+	ReleaseScene();
+
+	return 0;
 }
