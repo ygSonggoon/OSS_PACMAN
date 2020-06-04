@@ -206,7 +206,7 @@ int main()
 
 		MoveEnemy(&game);
 
-		//printf("Score: %d\nLifes: %d\n", game.score, game.life);
+
 
 		if (game.total_coins_number == 0 || game.life == 0)
 			running = 0;
