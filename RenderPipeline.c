@@ -5,9 +5,9 @@
 
 void rendering_pipeline(Game *game)
 {
-    ClearScene(); //콘솔 화면 정리.
+    clear_scene(); //콘솔 화면 정리.
 
-    DrawScene(game); //게임 화면 출력.
+    draw_scene(game); //게임 화면 출력.
 
-    FlipScene(); //다음 콘솔 버퍼로 변경.
+    flip_scene(); //다음 콘솔 버퍼로 변경.
 }
