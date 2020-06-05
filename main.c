@@ -7,7 +7,7 @@ void init_game(Game* game_data)
     //게임 초기화를 위한 변수 선언 부분입니다
     int ingame_coin_numbers = 0, ingame_enemy_numbers = 0;
     int map_vertical = 0, map_horizontal = 0;
-    int random_setting_value;
+
     char map_file_cell_value;
 
     //팩맨 위치 맵 중앙으로 초기화 하는 부분입니다
@@ -58,13 +58,13 @@ void init_game(Game* game_data)
             {
                 game_data->map.MAP[map_vertical][map_horizontal] = BLANK;
 
-                if ((random_setting_value = rand() % 15) < 1 && ingame_enemy_numbers < ENEMY_NUMBERS)
+                if (((map_vertical==1||map_vertical==CELL_SIZE-2)&&(map_horizontal==1||map_horizontal==CELL_SIZE-2))&&ingame_enemy_numbers<ENEMY_NUMBERS)
                 {
                     game_data->enemies[ingame_enemy_numbers].i = map_vertical;
                     game_data->enemies[ingame_enemy_numbers].j = map_horizontal;
                     ingame_enemy_numbers++;
-                }
 
+                }
                 game_data->coins[ingame_coin_numbers].i = map_vertical;
                 game_data->coins[ingame_coin_numbers].j = map_horizontal;
                 ingame_coin_numbers++;
