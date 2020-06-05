@@ -24,7 +24,7 @@ void init_game(Game* game_data)
     FILE* map_file;
     map_file = fopen("mapa.txt", "r");
 
-    //맵 파일을 읽어오는 함수 부분입니다, read_map.c 파일로 분류 할 수 있을 것 같습니다
+    //맵 파일을 읽어오는 함수 부분입니다
     if (map_file == NULL)
     {
         printf("경고! 맵 파일 없음!\n");
@@ -49,7 +49,7 @@ void init_game(Game* game_data)
         fclose(map_file);
     }
 
-    //맵 파일 읽어오고 난 후 나머지 정보들을 맵에 입력해주는 반복문 부분입니다, 이곳도 map_setting.c 파일로 분류 할 수 있을 것 같습니다
+    //맵 파일 읽어오고 난 후 나머지 정보들을 맵에 입력해주는 반복문 부분입니다
     for (map_vertical = 0; map_vertical < CELL_SIZE; map_vertical++)
     {
         for (map_horizontal = 0; map_horizontal < CELL_SIZE; map_horizontal++)
@@ -72,13 +72,13 @@ void init_game(Game* game_data)
         }
     }
 
-    //코인과 적 배열 초과된 부분 초기화 하는 부분입니다, 낭비되는 부분이므로 해결해야 합니다
+    //코인과 적 배열 초과된 부분 초기화 하는 부분입니다
     for (int i = ingame_coin_numbers + 1; i < CELL_SIZE * CELL_SIZE; i++)
     {
         game_data->coins[i].i = -1;
         game_data->coins[i].j = -1;
     }
-    //적 배열은 위치 고정으로 해결 할 수 있을 듯 합니다
+
     for (int i = ingame_enemy_numbers + 1; i < CELL_SIZE * CELL_SIZE; i++)
     {
         game_data->enemies[i].i = -1;

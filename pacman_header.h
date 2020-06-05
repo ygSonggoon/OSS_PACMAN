@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio2.h>
+#include "conio2.h"
 #include <windows.h>
 #include <time.h>
 
@@ -59,5 +59,5 @@ void draw_scene(Game* g);
 int collision_wall_check(Game* g, int i, int j);
 void move_enemies(Game* g);
 void move_pacman(Game* g);
-void change_direction(Game* g, char c)
+void change_direction(Game* g, char c);
 

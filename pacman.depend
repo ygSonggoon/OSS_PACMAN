@@ -6,3 +6,24 @@
 	<windows.h>
 	<time.h>
 
+1386408276 source:c:\users\±è¼º¼ö\oss_pacman\conio.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	<string.h>
+	"conio2.h"
+
+1386328178 c:\users\±è¼º¼ö\oss_pacman\conio2.h
+	<conio.h>
+	<windows.h>
+
+1591362308 source:c:\users\±è¼º¼ö\oss_pacman\main.c
+	"pacman_header.h"
+
+1591361791 c:\users\±è¼º¼ö\oss_pacman\pacman_header.h
+	<stdio.h>
+	<stdlib.h>
+	"conio2.h"
+	<windows.h>
+	<time.h>
+
