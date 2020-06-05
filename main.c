@@ -4,39 +4,39 @@ void init_game(Game* game_data)
 {
     srand(time(NULL));
 
-    //Â°Ã”Ã€Ã“ ÃƒÃŠÂ±Ã¢ÃˆÂ­Å¾Å  Ã€Â§Ã‡Ã‘ ÂºÂ¯Å’Ã¶ Å’Â±Å¸Ã° ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™
-    int ingame_coin_numbers = 0;
+    //°ÔÀÓ ÃÊ±âÈ­¸¦ À§ÇÑ º¯¼ö ¼±¾ğ ºÎºĞÀÔ´Ï´Ù
+    int ingame_coin_numbers = 0, ingame_enemy_numbers = 0;
     int map_vertical = 0, map_horizontal = 0;
     int random_setting_value;
     char map_file_cell_value;
 
-    //Ã†Ã‘Å¾Ã‡ Ã€Â§Ã„Â¡ Å¾ÃŠ ÃÃŸÅ¸Ã“Ã€Å¾Â·Ã ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã‡ÃÅ½Ã‚ ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™
-    game_data->pacman.pacman_vertical = CELL_SIZE/2;
-    game_data->pacman.pacman_horizontal = CELL_SIZE/2;
+    //ÆÑ¸Ç À§Ä¡ ¸Ê Áß¾ÓÀ¸·Î ÃÊ±âÈ­ ÇÏ´Â ºÎºĞÀÔ´Ï´Ù
+    game_data->pacman.pacman_vertical = CELL_SIZE / 2;
+    game_data->pacman.pacman_horizontal = CELL_SIZE / 2;
     game_data->pacman.direction = PAUSE;
 
-    //Â±Ã¢Ã…Å¾ Â°Ã”Ã€Ã“ ÂºÂ¯Å’Ã¶ ÃƒÃŠÂ±Ã¢ÃˆÂ­Ã€Ã”Å½ÃÅ½Ã™
+    //±âÅ¸ °ÔÀÓ º¯¼ö ÃÊ±âÈ­ÀÔ´Ï´Ù
     game_data->score = 0;
     game_data->lifes = 3;
     game_data->enemies_movement = PAUSE;
 
-    //Â¿ÃœÂºÃ Å¾ÃŠ Ã†Ã„Ã€ÃÃ€Â» Ã€ÃÅ¸Ã®Â¿Ã€Â±Ã¢ Ã€Â§Ã‡Ã‘ ÂºÂ¯Å’Ã¶ Å’Â±Å¸Ã°Ã€Ã”Å½ÃÅ½Ã™
-    FILE *map_file;
+    //¿ÜºÎ ¸Ê ÆÄÀÏÀ» ÀĞ¾î¿À±â À§ÇÑ º¯¼ö ¼±¾ğÀÔ´Ï´Ù
+    FILE* map_file;
     map_file = fopen("mapa.txt", "r");
 
-    //Å¾ÃŠ Ã†Ã„Ã€ÃÃ€Â» Ã€ÃÅ¸Ã®Â¿Ã€Å½Ã‚ Ã‡Ã”Å’Ã¶ ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™, read_map.c Ã†Ã„Ã€ÃÂ·Ã ÂºÃÂ·Ã¹ Ã‡Ã’ Å’Ã¶ Ã€Ã–Ã€Â» Â°Ã Â°Â°Å“Ã€Å½ÃÅ½Ã™
-    if(map_file == NULL)
+    //¸Ê ÆÄÀÏÀ» ÀĞ¾î¿À´Â ÇÔ¼ö ºÎºĞÀÔ´Ï´Ù, read_map.c ÆÄÀÏ·Î ºĞ·ù ÇÒ ¼ö ÀÖÀ» °Í °°½À´Ï´Ù
+    if (map_file == NULL)
     {
-        printf("Â°Ã¦Â°Ã­! Å¾ÃŠ Ã†Ã„Ã€Ã Å¸Ã¸Ã€Å“!\n");
+        printf("°æ°í! ¸Ê ÆÄÀÏ ¾øÀ½!\n");
         exit(1);
     }
     else
     {
-        while( (map_file_cell_value = fgetc(map_file))!= EOF )
+        while ((map_file_cell_value = fgetc(map_file)) != EOF)
         {
-            if(map_file_cell_value != '\n')
+            if (map_file_cell_value != '\n')
             {
-                //Â¿Â©Â±Ã¢Å’Â­ Å¾ÃŠ Ã†Ã„Ã€ÃÃ€Â» Ã€ÃÅ¸Ã®Â¿Ãƒ Â¶Â§ Å¾ÃŠÂ¿Â¡ ÂºÂ®Â°Ãº Â±Ã¦Ã€ÃŒ Å’Â³Ãâ‚¬Ã€ÃŒ Â¹ÃŒÅ¾Â® ÂµÃ‹Å½ÃÅ½Ã™
+                //¿©±â¼­ ¸Ê ÆÄÀÏÀ» ÀĞ¾î¿Ã ¶§ ¸Ê¿¡ º®°ú ±æÀÌ ¼³Á¤ÀÌ ¹Ì¸® µË´Ï´Ù
                 game_data->map.MAP[map_vertical][map_horizontal] = map_file_cell_value;
                 map_horizontal++;
             }
@@ -49,7 +49,7 @@ void init_game(Game* game_data)
         fclose(map_file);
     }
 
-    //Å¾ÃŠ Ã†Ã„Ã€Ã Ã€ÃÅ¸Ã®Â¿Ã€Â°Ã­ Â³Â­ ÃˆÃ„ Â³ÂªÅ¾Ã“ÃÃ¶ Ãâ‚¬ÂºÅ¾ÂµÃ©Ã€Â» Å¾ÃŠÂ¿Â¡ Ã€Ã”Â·Ã‚Ã‡Ã˜ÃÃ–Å½Ã‚ Â¹ÃÂºÂ¹Â¹Â® ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™, Ã€ÃŒÂ°Ã·ÂµÂµ map_setting.c Ã†Ã„Ã€ÃÂ·Ã ÂºÃÂ·Ã¹ Ã‡Ã’ Å’Ã¶ Ã€Ã–Ã€Â» Â°Ã Â°Â°Å“Ã€Å½ÃÅ½Ã™
+    //¸Ê ÆÄÀÏ ÀĞ¾î¿À°í ³­ ÈÄ ³ª¸ÓÁö Á¤º¸µéÀ» ¸Ê¿¡ ÀÔ·ÂÇØÁÖ´Â ¹İº¹¹® ºÎºĞÀÔ´Ï´Ù, ÀÌ°÷µµ map_setting.c ÆÄÀÏ·Î ºĞ·ù ÇÒ ¼ö ÀÖÀ» °Í °°½À´Ï´Ù
     for (map_vertical = 0; map_vertical < CELL_SIZE; map_vertical++)
     {
         for (map_horizontal = 0; map_horizontal < CELL_SIZE; map_horizontal++)
@@ -58,6 +58,13 @@ void init_game(Game* game_data)
             {
                 game_data->map.MAP[map_vertical][map_horizontal] = BLANK;
 
+                if ((random_setting_value = rand() % 15) < 1 && ingame_enemy_numbers < ENEMY_NUMBERS)
+                {
+                    game_data->enemies[ingame_enemy_numbers].i = map_vertical;
+                    game_data->enemies[ingame_enemy_numbers].j = map_horizontal;
+                    ingame_enemy_numbers++;
+                }
+
                 game_data->coins[ingame_coin_numbers].i = map_vertical;
                 game_data->coins[ingame_coin_numbers].j = map_horizontal;
                 ingame_coin_numbers++;
@@ -65,47 +72,29 @@ void init_game(Game* game_data)
         }
     }
 
-    //Ã„ÃšÃ€ÃÂ°Ãº Ã€Ã» Â¹Ã¨Â¿Â­ ÃƒÃŠÂ°ÃºÂµÃˆ ÂºÃÂºÃ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã‡ÃÅ½Ã‚ ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™, Â³Â¶ÂºÃ±ÂµÃ‡Å½Ã‚ ÂºÃÂºÃÃ€ÃŒÂ¹Ã‡Â·Ã Ã‡Ã˜Â°Ã¡Ã‡Ã˜Å¸ÃŸ Ã‡Ã•Å½ÃÅ½Ã™
-    for(int i = ingame_coin_numbers+1; i < CELL_SIZE*CELL_SIZE; i++)
+    //ÄÚÀÎ°ú Àû ¹è¿­ ÃÊ°úµÈ ºÎºĞ ÃÊ±âÈ­ ÇÏ´Â ºÎºĞÀÔ´Ï´Ù, ³¶ºñµÇ´Â ºÎºĞÀÌ¹Ç·Î ÇØ°áÇØ¾ß ÇÕ´Ï´Ù
+    for (int i = ingame_coin_numbers + 1; i < CELL_SIZE * CELL_SIZE; i++)
     {
         game_data->coins[i].i = -1;
         game_data->coins[i].j = -1;
     }
-    
-    for(int i = 0; i < ENEMY_NUMBERS; i++)
+    //Àû ¹è¿­Àº À§Ä¡ °íÁ¤À¸·Î ÇØ°á ÇÒ ¼ö ÀÖÀ» µí ÇÕ´Ï´Ù
+    for (int i = ingame_enemy_numbers + 1; i < CELL_SIZE * CELL_SIZE; i++)
     {
-	switch (i)
-	{
-	case 0:
-	    game_data->enemies[i].i = 1;
-	    game_data->enemies[i].j = 1;
-	    break;
-	case 1:
-	    game_data->enemies[i].i = CELL_SIZE - 1;
-	    game_data->enemies[i].j = 1;
-	    break;
-	case 2:
-	    game_data->enemies[i].i = 1;
-	    game_data->enemies[i].j = CELL_SIZE - 1;
-	    break;
-	case 3:
-	    game_data->enemies[i].i = CELL_SIZE - 1;
-	    game_data->enemies[i].j = CELL_SIZE - 1;
-	    break;
-	default:
-	    break;
-	}
+        game_data->enemies[i].i = -1;
+        game_data->enemies[i].j = -1;
+        game_data->enemies[i].direction = PAUSE;
     }
 
-    //Å¾Â¶ÃÃ¶Å¾Â·Ã€Å¾Â·Ã Å¾ÃŠ Â³Â»ÂºÃ Ã€Ã¼ÃƒÅ’ ÂµÂ¿Ã€Ã¼ Â°Â¹Å’Ã¶Å¾Å  Â°Ã”Ã€Ã“ ÂµÂ¥Ã€ÃŒÃ…ÃÂ¿Â¡ Ã€Ã”Â·Ã‚Ã‡Ã˜ÃÃÅ½ÃÅ½Ã™
+    //¸¶Áö¸·À¸·Î ¸Ê ³»ºÎ ÀüÃ¼ µ¿Àü °¹¼ö¸¦ °ÔÀÓ µ¥ÀÌÅÍ¿¡ ÀÔ·ÂÇØÁİ´Ï´Ù
     game_data->total_coin_number = ingame_coin_numbers;
 }
 
 int has_coin_in_pos(Game* g, int i, int j)
 {
-    for(int k=0; k < CELL_SIZE*CELL_SIZE; k++)
+    for (int k = 0; k < CELL_SIZE * CELL_SIZE; k++)
     {
-        if(g->coins[k].i == i && g->coins[k].j == j)
+        if (g->coins[k].i == i && g->coins[k].j == j)
             return k;
     }
     return -1;
@@ -113,9 +102,9 @@ int has_coin_in_pos(Game* g, int i, int j)
 
 int has_enemy_in_pos(Game* g, int i, int j)
 {
-    for(int k=0; k < CELL_SIZE*CELL_SIZE; k++)
+    for (int k = 0; k < CELL_SIZE * CELL_SIZE; k++)
     {
-        if(g->enemies[k].i == i && g->enemies[k].j == j)
+        if (g->enemies[k].i == i && g->enemies[k].j == j)
             return k;
     }
     return -1;
@@ -130,7 +119,7 @@ void collision_coin_check(Game* g, int i, int j)
 {
     int k;
     k = has_coin_in_pos(g, i, j);
-    if(k >= 0)
+    if (k >= 0)
     {
         g->coins[k].i = -1;
         g->coins[k].j = -1;
@@ -143,13 +132,13 @@ void collision_enemy_check(Game* g, int i, int j)
 {
     int k;
     k = has_enemy_in_pos(g, i, j);
-    if(k >= 0)
+    if (k >= 0)
     {
         g->coins[k].i = -99;
         g->coins[k].j = -99;
         g->lifes--;
-        g->pacman.pacman_vertical = CELL_SIZE/2;
-        g->pacman.pacman_horizontal = CELL_SIZE/2;
+        g->pacman.pacman_vertical = CELL_SIZE / 2;
+        g->pacman.pacman_horizontal = CELL_SIZE / 2;
         g->pacman.direction = PAUSE;
         g->enemies_movement = PAUSE;
     }
@@ -158,19 +147,19 @@ void collision_enemy_check(Game* g, int i, int j)
 void draw_scene(Game* g)
 {
     int k, l;
-    for(int i=0; i< CELL_SIZE; i++)
+    for (int i = 0; i < CELL_SIZE; i++)
     {
-        for(int j=0; j < CELL_SIZE; j++)
+        for (int j = 0; j < CELL_SIZE; j++)
         {
             k = has_coin_in_pos(g, i, j);
             l = has_enemy_in_pos(g, i, j);
-            if(g->map.MAP[i][j] == WALL)
+            if (g->map.MAP[i][j] == WALL)
             {
                 textbackground(RED);
                 printf("  ");
                 textbackground(BLACK);
             }
-            else if(l >= 0)
+            else if (l >= 0)
             {
                 textbackground(BLACK);
                 textcolor(LIGHTBLUE);
@@ -178,7 +167,7 @@ void draw_scene(Game* g)
                 textcolor(WHITE);
                 textbackground(BLACK);
             }
-            else if(k >= 0)
+            else if (k >= 0)
             {
                 textbackground(BLACK);
                 textcolor(YELLOW);
@@ -186,7 +175,7 @@ void draw_scene(Game* g)
                 textcolor(WHITE);
                 textbackground(BLACK);
             }
-            else if(g->pacman.pacman_vertical == i && g->pacman.pacman_horizontal == j)
+            else if (g->pacman.pacman_vertical == i && g->pacman.pacman_horizontal == j)
             {
                 textbackground(BLACK);
                 textcolor(WHITE);
@@ -209,9 +198,9 @@ void draw_scene(Game* g)
 
 int collision_wall_check(Game* g, int i, int j)
 {
-    if(i < 0 || i > CELL_SIZE-1 || j < 0 || j > CELL_SIZE-1)
+    if (i < 0 || i > CELL_SIZE - 1 || j < 0 || j > CELL_SIZE - 1)
         return 0;
-    if(g->map.MAP[i][j] == WALL)
+    if (g->map.MAP[i][j] == WALL)
         return 1;
     return 0;
 }
@@ -220,32 +209,32 @@ void move_enemies(Game* g)
 {
 
     int rdm;
-    if(g->enemies_movement != PAUSE)
+    if (g->enemies_movement != PAUSE)
     {
-        for(int k=0; k < CELL_SIZE*CELL_SIZE; k++)
+        for (int k = 0; k < CELL_SIZE * CELL_SIZE; k++)
         {
-            rdm = (rand()%3)-1;
-            if(g->enemies[k].i >= 0)
+            rdm = (rand() % 3) - 1;
+            if (g->enemies[k].i >= 0)
             {
-                if(!collision_wall_check(g, g->enemies[k].i + rdm, g->enemies[k].j)){
+                if (!collision_wall_check(g, g->enemies[k].i + rdm, g->enemies[k].j)) {
                     g->enemies[k].i += rdm;
-                    if(g->enemies[k].i < 0)
-                        g->enemies[k].i = CELL_SIZE-1;
-                    if(g->enemies[k].i > CELL_SIZE-1)
+                    if (g->enemies[k].i < 0)
+                        g->enemies[k].i = CELL_SIZE - 1;
+                    if (g->enemies[k].i > CELL_SIZE - 1)
                         g->enemies[k].i = 0;
                 }
             }
 
-            if(rdm == 0)
+            if (rdm == 0)
             {
-                rdm = (rand()%3)-1;
-                if(g->enemies[k].j >= 0)
+                rdm = (rand() % 3) - 1;
+                if (g->enemies[k].j >= 0)
                 {
-                    if(!collision_wall_check(g, g->enemies[k].i, g->enemies[k].j + rdm)){
+                    if (!collision_wall_check(g, g->enemies[k].i, g->enemies[k].j + rdm)) {
                         g->enemies[k].j += rdm;
-                        if(g->enemies[k].j < 0)
-                            g->enemies[k].j = CELL_SIZE-1;
-                        if(g->enemies[k].j > CELL_SIZE-1)
+                        if (g->enemies[k].j < 0)
+                            g->enemies[k].j = CELL_SIZE - 1;
+                        if (g->enemies[k].j > CELL_SIZE - 1)
                             g->enemies[k].j = 0;
                     }
                 }
@@ -256,41 +245,41 @@ void move_enemies(Game* g)
 
 void move_pacman(Game* g)
 {
-    if(g->pacman.direction == UP_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical-1, g->pacman.pacman_horizontal))
+    if (g->pacman.direction == UP_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical - 1, g->pacman.pacman_horizontal))
     {
         g->pacman.pacman_vertical--;
-        if(g->pacman.pacman_vertical < 0)
-            g->pacman.pacman_vertical = CELL_SIZE-1;
+        if (g->pacman.pacman_vertical < 0)
+            g->pacman.pacman_vertical = CELL_SIZE - 1;
     }
-    else if(g->pacman.direction == DOWN_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical+1, g->pacman.pacman_horizontal))
+    else if (g->pacman.direction == DOWN_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical + 1, g->pacman.pacman_horizontal))
     {
         g->pacman.pacman_vertical++;
-        if(g->pacman.pacman_vertical > CELL_SIZE-1)
+        if (g->pacman.pacman_vertical > CELL_SIZE - 1)
             g->pacman.pacman_vertical = 0;
     }
-    else if(g->pacman.direction == RIGHT_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical, g->pacman.pacman_horizontal+1))
+    else if (g->pacman.direction == RIGHT_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical, g->pacman.pacman_horizontal + 1))
     {
         g->pacman.pacman_horizontal++;
-        if(g->pacman.pacman_horizontal > CELL_SIZE-1)
+        if (g->pacman.pacman_horizontal > CELL_SIZE - 1)
             g->pacman.pacman_horizontal = 0;
     }
-    else if(g->pacman.direction == LEFT_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical, g->pacman.pacman_horizontal-1))
+    else if (g->pacman.direction == LEFT_MOVE && !collision_wall_check(g, g->pacman.pacman_vertical, g->pacman.pacman_horizontal - 1))
     {
         g->pacman.pacman_horizontal--;
-        if(g->pacman.pacman_horizontal < 0)
-            g->pacman.pacman_horizontal = CELL_SIZE-1;
+        if (g->pacman.pacman_horizontal < 0)
+            g->pacman.pacman_horizontal = CELL_SIZE - 1;
     }
 }
 
 void change_direction(Game* g, char c)
 {
-    if(c == UP_MOVE)
+    if (c == UP_MOVE)
         g->pacman.direction = UP_MOVE;
-    else if(c == DOWN_MOVE)
+    else if (c == DOWN_MOVE)
         g->pacman.direction = DOWN_MOVE;
-    else if(c == RIGHT_MOVE)
+    else if (c == RIGHT_MOVE)
         g->pacman.direction = RIGHT_MOVE;
-    else if(c == LEFT_MOVE)
+    else if (c == LEFT_MOVE)
         g->pacman.direction = LEFT_MOVE;
 }
 
@@ -301,11 +290,11 @@ int main()
     int jogando = 1;
     char c = 'v';
 
-    while(jogando)
+    while (jogando)
     {
         delay(150);
         clrscr();
-        if(kbhit())
+        if (kbhit())
         {
             c = getch();
             change_direction(&j, c);
@@ -317,7 +306,7 @@ int main()
         draw_scene(&j);
         move_enemies(&j);
         printf("Score: %d\nLifes: %d\n", j.score, j.lifes);
-        if(j.total_coin_number == 0 || j.lifes == 0) jogando = 0;
+        if (j.total_coin_number == 0 || j.lifes == 0) jogando = 0;
 
     }
 
