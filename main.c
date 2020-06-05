@@ -1,83 +1,33 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <conio2.h>
-#include <windows.h>
-#include <time.h>
-
-#define CELL_SIZE 13
-#define WALL 'X'
-#define BLANK ' '
-#define UP_MOVE 'w'
-#define DOWN_MOVE 's'
-#define LEFT_MOVE 'a'
-#define RIGHT_MOVE 'd'
-#define PAUSE 'p'
-#define MOVE_STATUS 'm'
-#define ENEMY_NUMBERS 4
-
-typedef struct Map
-{
-    char MAP[CELL_SIZE][CELL_SIZE];
-} Map;
-
-typedef struct Pacman
-{
-    int pacman_vertical, pacman_horizontal;
-    char direction;
-} Pacman;
-
-typedef struct Enemy
-{
-    int i, j;
-    char direction;
-} Enemy;
-
-typedef struct Coin
-{
-    int i, j;
-} Coin;
-
-typedef struct Game
-{
-    Map map;
-    Pacman pacman;
-    Coin coins[CELL_SIZE*CELL_SIZE];
-    Enemy enemies[CELL_SIZE*CELL_SIZE];
-
-    unsigned int score;
-    unsigned int total_coin_number;
-    unsigned short int lifes;
-    short int enemies_movement;
-} Game;
+#include "pacman_header.h"
 
 void init_game(Game* game_data)
 {
     srand(time(NULL));
 
-    //°ÔÀÓ ÃÊ±âÈ­¸¦ À§ÇÑ º¯¼ö ¼±¾ğ ºÎºĞÀÔ´Ï´Ù
-    int ingame_coin_numbers = 0, ingame_enemy_numbers = 0;
+    //Â°Ã”Ã€Ã“ ÃƒÃŠÂ±Ã¢ÃˆÂ­Å¾Å  Ã€Â§Ã‡Ã‘ ÂºÂ¯Å’Ã¶ Å’Â±Å¸Ã° ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™
+    int ingame_coin_numbers = 0;
     int map_vertical = 0, map_horizontal = 0;
     int random_setting_value;
     char map_file_cell_value;
 
-    //ÆÑ¸Ç À§Ä¡ ¸Ê Áß¾ÓÀ¸·Î ÃÊ±âÈ­ ÇÏ´Â ºÎºĞÀÔ´Ï´Ù
+    //Ã†Ã‘Å¾Ã‡ Ã€Â§Ã„Â¡ Å¾ÃŠ ÃÃŸÅ¸Ã“Ã€Å¾Â·Ã ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã‡ÃÅ½Ã‚ ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™
     game_data->pacman.pacman_vertical = CELL_SIZE/2;
     game_data->pacman.pacman_horizontal = CELL_SIZE/2;
     game_data->pacman.direction = PAUSE;
 
-    //±âÅ¸ °ÔÀÓ º¯¼ö ÃÊ±âÈ­ÀÔ´Ï´Ù
+    //Â±Ã¢Ã…Å¾ Â°Ã”Ã€Ã“ ÂºÂ¯Å’Ã¶ ÃƒÃŠÂ±Ã¢ÃˆÂ­Ã€Ã”Å½ÃÅ½Ã™
     game_data->score = 0;
     game_data->lifes = 3;
     game_data->enemies_movement = PAUSE;
 
-    //¿ÜºÎ ¸Ê ÆÄÀÏÀ» ÀĞ¾î¿À±â À§ÇÑ º¯¼ö ¼±¾ğÀÔ´Ï´Ù
+    //Â¿ÃœÂºÃ Å¾ÃŠ Ã†Ã„Ã€ÃÃ€Â» Ã€ÃÅ¸Ã®Â¿Ã€Â±Ã¢ Ã€Â§Ã‡Ã‘ ÂºÂ¯Å’Ã¶ Å’Â±Å¸Ã°Ã€Ã”Å½ÃÅ½Ã™
     FILE *map_file;
     map_file = fopen("mapa.txt", "r");
 
-    //¸Ê ÆÄÀÏÀ» ÀĞ¾î¿À´Â ÇÔ¼ö ºÎºĞÀÔ´Ï´Ù, read_map.c ÆÄÀÏ·Î ºĞ·ù ÇÒ ¼ö ÀÖÀ» °Í °°½À´Ï´Ù
+    //Å¾ÃŠ Ã†Ã„Ã€ÃÃ€Â» Ã€ÃÅ¸Ã®Â¿Ã€Å½Ã‚ Ã‡Ã”Å’Ã¶ ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™, read_map.c Ã†Ã„Ã€ÃÂ·Ã ÂºÃÂ·Ã¹ Ã‡Ã’ Å’Ã¶ Ã€Ã–Ã€Â» Â°Ã Â°Â°Å“Ã€Å½ÃÅ½Ã™
     if(map_file == NULL)
     {
-        printf("°æ°í! ¸Ê ÆÄÀÏ ¾øÀ½!\n");
+        printf("Â°Ã¦Â°Ã­! Å¾ÃŠ Ã†Ã„Ã€Ã Å¸Ã¸Ã€Å“!\n");
         exit(1);
     }
     else
@@ -86,7 +36,7 @@ void init_game(Game* game_data)
         {
             if(map_file_cell_value != '\n')
             {
-                //¿©±â¼­ ¸Ê ÆÄÀÏÀ» ÀĞ¾î¿Ã ¶§ ¸Ê¿¡ º®°ú ±æÀÌ ¼³Á¤ÀÌ ¹Ì¸® µË´Ï´Ù
+                //Â¿Â©Â±Ã¢Å’Â­ Å¾ÃŠ Ã†Ã„Ã€ÃÃ€Â» Ã€ÃÅ¸Ã®Â¿Ãƒ Â¶Â§ Å¾ÃŠÂ¿Â¡ ÂºÂ®Â°Ãº Â±Ã¦Ã€ÃŒ Å’Â³Ãâ‚¬Ã€ÃŒ Â¹ÃŒÅ¾Â® ÂµÃ‹Å½ÃÅ½Ã™
                 game_data->map.MAP[map_vertical][map_horizontal] = map_file_cell_value;
                 map_horizontal++;
             }
@@ -99,7 +49,7 @@ void init_game(Game* game_data)
         fclose(map_file);
     }
 
-    //¸Ê ÆÄÀÏ ÀĞ¾î¿À°í ³­ ÈÄ ³ª¸ÓÁö Á¤º¸µéÀ» ¸Ê¿¡ ÀÔ·ÂÇØÁÖ´Â ¹İº¹¹® ºÎºĞÀÔ´Ï´Ù, ÀÌ°÷µµ map_setting.c ÆÄÀÏ·Î ºĞ·ù ÇÒ ¼ö ÀÖÀ» °Í °°½À´Ï´Ù
+    //Å¾ÃŠ Ã†Ã„Ã€Ã Ã€ÃÅ¸Ã®Â¿Ã€Â°Ã­ Â³Â­ ÃˆÃ„ Â³ÂªÅ¾Ã“ÃÃ¶ Ãâ‚¬ÂºÅ¾ÂµÃ©Ã€Â» Å¾ÃŠÂ¿Â¡ Ã€Ã”Â·Ã‚Ã‡Ã˜ÃÃ–Å½Ã‚ Â¹ÃÂºÂ¹Â¹Â® ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™, Ã€ÃŒÂ°Ã·ÂµÂµ map_setting.c Ã†Ã„Ã€ÃÂ·Ã ÂºÃÂ·Ã¹ Ã‡Ã’ Å’Ã¶ Ã€Ã–Ã€Â» Â°Ã Â°Â°Å“Ã€Å½ÃÅ½Ã™
     for (map_vertical = 0; map_vertical < CELL_SIZE; map_vertical++)
     {
         for (map_horizontal = 0; map_horizontal < CELL_SIZE; map_horizontal++)
@@ -108,13 +58,6 @@ void init_game(Game* game_data)
             {
                 game_data->map.MAP[map_vertical][map_horizontal] = BLANK;
 
-                if ((random_setting_value = rand() % 15) < 1 && ingame_enemy_numbers < ENEMY_NUMBERS)
-                {
-                    game_data->enemies[ingame_enemy_numbers].i = map_vertical;
-                    game_data->enemies[ingame_enemy_numbers].j = map_horizontal;
-                    ingame_enemy_numbers++;
-                }
-
                 game_data->coins[ingame_coin_numbers].i = map_vertical;
                 game_data->coins[ingame_coin_numbers].j = map_horizontal;
                 ingame_coin_numbers++;
@@ -122,21 +65,39 @@ void init_game(Game* game_data)
         }
     }
 
-    //ÄÚÀÎ°ú Àû ¹è¿­ ÃÊ°úµÈ ºÎºĞ ÃÊ±âÈ­ ÇÏ´Â ºÎºĞÀÔ´Ï´Ù, ³¶ºñµÇ´Â ºÎºĞÀÌ¹Ç·Î ÇØ°áÇØ¾ß ÇÕ´Ï´Ù
+    //Ã„ÃšÃ€ÃÂ°Ãº Ã€Ã» Â¹Ã¨Â¿Â­ ÃƒÃŠÂ°ÃºÂµÃˆ ÂºÃÂºÃ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã‡ÃÅ½Ã‚ ÂºÃÂºÃÃ€Ã”Å½ÃÅ½Ã™, Â³Â¶ÂºÃ±ÂµÃ‡Å½Ã‚ ÂºÃÂºÃÃ€ÃŒÂ¹Ã‡Â·Ã Ã‡Ã˜Â°Ã¡Ã‡Ã˜Å¸ÃŸ Ã‡Ã•Å½ÃÅ½Ã™
     for(int i = ingame_coin_numbers+1; i < CELL_SIZE*CELL_SIZE; i++)
     {
         game_data->coins[i].i = -1;
         game_data->coins[i].j = -1;
     }
-    //Àû ¹è¿­Àº À§Ä¡ °íÁ¤À¸·Î ÇØ°á ÇÒ ¼ö ÀÖÀ» µí ÇÕ´Ï´Ù
-    for(int i = ingame_enemy_numbers+1; i < CELL_SIZE*CELL_SIZE; i++)
+    
+    for(int i = 0; i < ENEMY_NUMBERS; i++)
     {
-        game_data->enemies[i].i = -1;
-        game_data->enemies[i].j = -1;
-        game_data->enemies[i].direction = PAUSE;
+	switch (i)
+	{
+	case 0:
+	    game_data->enemies[i].i = 1;
+	    game_data->enemies[i].j = 1;
+	    break;
+	case 1:
+	    game_data->enemies[i].i = CELL_SIZE - 1;
+	    game_data->enemies[i].j = 1;
+	    break;
+	case 2:
+	    game_data->enemies[i].i = 1;
+	    game_data->enemies[i].j = CELL_SIZE - 1;
+	    break;
+	case 3:
+	    game_data->enemies[i].i = CELL_SIZE - 1;
+	    game_data->enemies[i].j = CELL_SIZE - 1;
+	    break;
+	default:
+	    break;
+	}
     }
 
-    //¸¶Áö¸·À¸·Î ¸Ê ³»ºÎ ÀüÃ¼ µ¿Àü °¹¼ö¸¦ °ÔÀÓ µ¥ÀÌÅÍ¿¡ ÀÔ·ÂÇØÁİ´Ï´Ù
+    //Å¾Â¶ÃÃ¶Å¾Â·Ã€Å¾Â·Ã Å¾ÃŠ Â³Â»ÂºÃ Ã€Ã¼ÃƒÅ’ ÂµÂ¿Ã€Ã¼ Â°Â¹Å’Ã¶Å¾Å  Â°Ã”Ã€Ã“ ÂµÂ¥Ã€ÃŒÃ…ÃÂ¿Â¡ Ã€Ã”Â·Ã‚Ã‡Ã˜ÃÃÅ½ÃÅ½Ã™
     game_data->total_coin_number = ingame_coin_numbers;
 }
 
