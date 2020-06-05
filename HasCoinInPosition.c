@@ -5,7 +5,7 @@
 */
 #include "Header.h"
 
-int HasCoinInPosition(Game *game, int x_position, int y_position)
+int has_coin_in_position(Game *game, int x_position, int y_position)
 {
 	for (int index = 0; index < MAPSIZE*MAPSIZE; index++)
 	{

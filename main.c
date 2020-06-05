@@ -5,7 +5,7 @@
 
 void InitGame(Game* game) // 게임 Initialize
 {
-    InitScene();
+    init_scene();
 
 	srand((unsigned int)time(NULL));
 	int total_enemies = 4; // 적 갯수
@@ -199,10 +199,10 @@ int main()
 			InitEnemy(&game);
 		}
 		MovePacman(&game);
-		CheckCoinCollision(&game, game.pacman.i, game.pacman.j);
-		CheckEnemyCollision(&game, game.pacman.i, game.pacman.j);
+		check_coin_collision(&game, game.pacman.i, game.pacman.j);
+		check_enemy_collision(&game, game.pacman.i, game.pacman.j);
 
-        RenderingPipeline(&game);
+        rendering_pipeline(&game);
 
 		MoveEnemy(&game);
 

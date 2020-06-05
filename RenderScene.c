@@ -9,7 +9,7 @@ static int screen_index;
 static HANDLE screen_array[2];
 
 // 화면 버퍼 생성 함수.
-void InitScene()
+void init_scene()
 {
     CONSOLE_CURSOR_INFO current_cursor_info; // 현재 콘솔창의 커서 ("_") 정보를 받을 변수.
 
@@ -28,7 +28,7 @@ void InitScene()
 }
 
 // 화면 버퍼를 교체해줄 함수.
-void FlipScene()
+void flip_scene()
 {
     SetConsoleActiveScreenBuffer(screen_array[screen_index]);
 
@@ -37,7 +37,7 @@ void FlipScene()
 }
 
 // 화면을 지우는 함수.
-void ClearScene()
+void clear_scene()
 {
     //0,0 좌표를 저장하여 0,0 좌표부터 시작하게 설정.
     COORD coordination = {0,0};
@@ -49,14 +49,14 @@ void ClearScene()
 }
 
 // 화면 버퍼를 해제(삭제하는) 함수.
-void ReleaseScene()
+void release_scene()
 {
     CloseHandle(screen_array[0]);
     CloseHandle(screen_array[1]);
 }
 
 // 배열에 담긴 값을 하나 하나 출력하는 함수.
-void PrintScene(int x_position, int y_position, char *print_data)
+void print_scene(int x_position, int y_position, char *print_data)
 {
     DWORD dw;
 
@@ -69,7 +69,7 @@ void PrintScene(int x_position, int y_position, char *print_data)
 }
 
 // 문자의 색상값을 변경하는 함수.
-void SetColor(unsigned short color)
+void set_color(unsigned short color)
 {
 	SetConsoleTextAttribute(screen_array[screen_index], color);
 }

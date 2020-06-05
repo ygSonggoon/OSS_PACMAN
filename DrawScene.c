@@ -5,7 +5,7 @@
 
 #include "Header.h"
 
-void DrawScene(Game* game)
+void draw_scene(Game* game)
 {
 	int current_coin_number; //현재 코인의 갯수를 알려주는 변수.
 	int current_enemy_number; //현재 적의 갯수를 알려주는 변수.

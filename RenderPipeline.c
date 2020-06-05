@@ -3,7 +3,7 @@
 
 #include "Header.h"
 
-void RenderingPipeline(Game *game)
+void rendering_pipeline(Game *game)
 {
     ClearScene(); //콘솔 화면 정리.
 

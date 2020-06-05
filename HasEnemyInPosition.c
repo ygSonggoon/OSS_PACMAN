@@ -5,7 +5,7 @@
 */
 #include "Header.h"
 
-int HasEnemyInPosition(Game* game, int x_position, int y_position)
+int has_enemy_in_position(Game* game, int x_position, int y_position)
 {
 	for (int index = 0; index < MAPSIZE*MAPSIZE; index++)
 	{
@@ -14,5 +14,4 @@ int HasEnemyInPosition(Game* game, int x_position, int y_position)
 	}
 
 	return -1; //못 찾으면 -1 반환.
-}
 }

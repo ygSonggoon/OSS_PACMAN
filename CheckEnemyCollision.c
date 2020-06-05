@@ -5,11 +5,11 @@
 
 #include "Header.h"
 
-void CheckEnemyCollision(Game* game, int y_position, int x_position)
+void check_enemy_collision(Game* game, int y_position, int x_position)
 {
 	int current_enemies_index; // 현재 적이 존재하는지 체크 해줄 변수.
 
-	current_enemies_index = HasEnemyInPosition(game, y_position, x_position); // 현재 위치에 적이 존재하는지 HasEnemyInPosition 함수로 확인.
+	current_enemies_index = has_enemy_in_position(game, y_position, x_position); // 현재 위치에 적이 존재하는지 HasEnemyInPosition 함수로 확인.
 
 	if (current_enemies_index >= 0)
 	{

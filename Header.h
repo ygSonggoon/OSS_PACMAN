@@ -52,19 +52,19 @@ typedef struct Game
 } Game; // Game Manager 구조체라 생각됨
 
 // 충돌 처리 함수
-void CheckCoinCollision(Game* game, int y_position, int x_position);
-void CheckEnemyCollision(Game* game, int y_position, int x_position);
+void check_coin_collision(Game* game, int y_position, int x_position);
+void check_enemy_collision(Game* game, int y_position, int x_position);
 // 현재 좌표의 오브젝트 구분 함수
-int HasCoinInPosition(Game *game, int x_position, int y_position);
-int HasEnemyInPosition(Game *game,int x_position, int y_position);
+int has_coin_in_position(Game *game, int x_position, int y_position);
+int has_enemy_in_position(Game *game,int x_position, int y_position);
 // 화면 관련 함수
-void RenderingPipeline(Game *game); //렌더링 하는 과정을 총괄하는 함수.
+void rendering_pipeline(Game *game); //렌더링 하는 과정을 총괄하는 함수.
 
-void InitScene(); //화면 초기화 함수.
-void FlipScene(); //화면 바꾸어 줄 함수.
-void ClearScene(); //화면을 지워줄 함수.
-void ReleaseScene(); //프로그램 종료 시 화면을 삭제하는 함수.
-void PrintScene(int y_position, int x_position, char* print_data); //화면을 출력해 줄 함수.
-void SetColor(unsigned short color); //문자의 색상을 지정해 줄 함수.
+void init_scene(); //화면 초기화 함수.
+void flip_scene(); //화면 바꾸어 줄 함수.
+void clear_scene(); //화면을 지워줄 함수.
+void release_scene(); //프로그램 종료 시 화면을 삭제하는 함수.
+void print_scene(int y_position, int x_position, char* print_data); //화면을 출력해 줄 함수.
+void set_color(unsigned short color); //문자의 색상을 지정해 줄 함수.
 
-void DrawScene(Game* game); //실제 렌더링 함수.
+void draw_scene(Game* game); //실제 렌더링 함수.

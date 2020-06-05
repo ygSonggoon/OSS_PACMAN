@@ -5,11 +5,11 @@
 
 #include "Header.h"
 
-void CheckCoinCollision(Game* game, int y_position, int x_position)
+void check_coin_collision(Game* game, int y_position, int x_position)
 {
 	int current_coins_index; // 현재 검색중인 코인의 index값 받을 변수.
 
-	current_coins_index = HasCoinInPosition(game, y_position, x_position);
+	current_coins_index = has_coin_in_position(game, y_position, x_position);
     // 현재 코인이 좌표에 존재하는지 확인할 변수.
 	if (current_coins_index >= 0)
 	{
