@@ -14,6 +14,7 @@
 #define PAUSE 'p'
 #define MOVE_STATUS 'm'
 #define ENEMY_NUMBERS 4
+#define REMOVED -1 // 코인 배열을 삭제할 때 쓸 값.
 
 typedef struct Map
 {
