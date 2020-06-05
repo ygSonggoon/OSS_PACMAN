@@ -4,6 +4,8 @@
  * 랜덤값을 이용해서 해당 확률을 구분시켜 주었습니다.
  **/
 
+#include "Header.h"
+
 void move_enemies(Game* g)
 {
 

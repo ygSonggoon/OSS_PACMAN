@@ -1,4 +1,4 @@
-#include "header.h"
+#include "Header.h"
 
 //방향키 조정방법.
 void change_direction(Game* g, char c)

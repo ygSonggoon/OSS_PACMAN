@@ -1,6 +1,9 @@
 /*
 팩맨이 움직이는 기능을 합니다. 사용자가 방향키를 입력한 경우 한칸 씩 움직이게 됩니다.
 */
+
+#include "Header.h"
+
 void move_pacman(Game* g)
 {
 
