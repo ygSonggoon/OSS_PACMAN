@@ -15,6 +15,8 @@
 #define DEACTIVE 'p'
 #define ACTIVE 'm'
 
+#define REMOVED -1 // 코인 배열을 삭제할 때 쓸 값.
+
 typedef struct map
 {
 	char mapData[MAPSIZE][MAPSIZE];
@@ -24,26 +26,17 @@ typedef struct pacman
 {
 	int i, j; // 좌표값
 	char direction; //입력 방향
-
-    char *player_graphic;
-    int player_graphic_length;
 } Player; // 플레이어 구조체
 
 typedef struct enemy
 {
 	int i, j; // 좌표값
 	char direction; // 방향
-
-    char *enemy_graphic;
-    int enemy_graphic_length;
 } Enemy; // 적 구조체
 
 typedef struct coin
 {
 	int i, j; // 좌표값
-
-	char *coin_graphic;
-	int coin_graphic_length;
 } Coin; //코인 아이템 구조체
 
 typedef struct Game
@@ -71,8 +64,7 @@ void InitScene(); //화면 초기화 함수.
 void FlipScene(); //화면 바꾸어 줄 함수.
 void ClearScene(); //화면을 지워줄 함수.
 void ReleaseScene(); //프로그램 종료 시 화면을 삭제하는 함수.
-void PrintScene(int y_position, int x_position, char* print_data);
-void SetColor(unsigned short color);
-void SetTextColors(unsigned short text_color, unsigned short background_color);
+void PrintScene(int y_position, int x_position, char* print_data); //화면을 출력해 줄 함수.
+void SetColor(unsigned short color); //문자의 색상을 지정해 줄 함수.
 
 void DrawScene(Game* game); //실제 렌더링 함수.

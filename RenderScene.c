@@ -11,30 +11,35 @@ static HANDLE screen_array[2];
 // 화면 버퍼 생성 함수.
 void InitScene()
 {
-    CONSOLE_CURSOR_INFO current_cursor_info;
+    CONSOLE_CURSOR_INFO current_cursor_info; // 현재 콘솔창의 커서 ("_") 정보를 받을 변수.
 
+
+    //콘솔 화면 버퍼 창을 생성할 변수들.
     screen_array[0] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0,NULL,CONSOLE_TEXTMODE_BUFFER, NULL);
     screen_array[1] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0,NULL,CONSOLE_TEXTMODE_BUFFER, NULL);
 
+    //콘솔창의 커서를 보이지 않게 변경.
     current_cursor_info.dwSize = 1;
     current_cursor_info.bVisible = FALSE;
 
+    //콘솔창 커서 옵션을 각 버퍼에 저장함.
     SetConsoleCursorInfo(screen_array[0], &current_cursor_info);
     SetConsoleCursorInfo(screen_array[1], &current_cursor_info);
-
-    system("mode con cols=20 lines=20");
 }
 
 // 화면 버퍼를 교체해줄 함수.
 void FlipScene()
 {
     SetConsoleActiveScreenBuffer(screen_array[screen_index]);
+
+    //Flag 형식으로 화면을 계속해서 바꿈.
     screen_index = !screen_index;
 }
 
 // 화면을 지우는 함수.
 void ClearScene()
 {
+    //0,0 좌표를 저장하여 0,0 좌표부터 시작하게 설정.
     COORD coordination = {0,0};
     DWORD dw;
 
@@ -54,20 +59,16 @@ void ReleaseScene()
 void PrintScene(int x_position, int y_position, char *print_data)
 {
     DWORD dw;
-    COORD cursor_position = {x_position, y_position};
 
-    SetConsoleCursorPosition(screen_array[screen_index], cursor_position);
+    COORD cursor_position = {x_position, y_position}; //출력할 문자의 좌표값을 저장.
 
-    WriteFile(screen_array[screen_index], print_data,strlen(print_data), &dw, NULL);
+    SetConsoleCursorPosition(screen_array[screen_index], cursor_position); //출력할 문자의 좌표값을 일치하게 이동.
+
+    WriteFile(screen_array[screen_index], print_data,strlen(print_data), &dw, NULL); //버퍼에 출력 문자열을 저장.
 
 }
 
-void SetTextColors(unsigned short text_color, unsigned short background_color)
-{
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), text_color| (background_color<<4));
-}
-
-
+// 문자의 색상값을 변경하는 함수.
 void SetColor(unsigned short color)
 {
 	SetConsoleTextAttribute(screen_array[screen_index], color);
