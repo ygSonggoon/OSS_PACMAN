@@ -1,4 +1,4 @@
-#include "pacman_header.h"
+#include "Header.h"
 
 void init_game(Game* game_data)
 {
