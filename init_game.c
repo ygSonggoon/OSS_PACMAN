@@ -2,6 +2,7 @@
 
 void init_game(Game* game_data)
 {
+    init_scene();
     srand(time(NULL));
 
     //게임 초기화를 위한 변수 선언 부분입니다

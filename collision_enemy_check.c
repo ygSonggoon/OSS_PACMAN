@@ -1,30 +1,33 @@
 /*
-init_enemies가 필요시에만 작동할수 있도록 하는 과정에서 포인터 매개변수가 추가되었습니다.
-해당 변수가 1일 때에는 게임의 판이 진행중임을 의미하며 0일때에는 게임의 판이 종료된 것을 의미합니다.
-해당 함수에서는 진행상태에서 종료상태로 변화할때를 구현하게 되었습니다. 
+[Description]
+���� �÷��̾ �浹�ߴ��� üũ���ִ� �Լ�.
 */
 
 #include "Header.h"
 
-void collision_enemy_check(Game* g, int i, int j, int* flag)
+void collision_enemy_check(Game* g, int y_position, int x_position, int* flag)
 {
-    int k;
-    k = has_enemy_in_pos(g, i, j);
-    if(k >= 0)
-    {
-        g->coins[k].i = -99;
-        g->coins[k].j = -99;
-        g->lifes--;
+	int current_enemies_index; // 현재 적이 존재하는지 체크 해줄 변수.
 
-        //부딪힌 경우에는 팩맨을 다시 맵 정중앙으로 위치 시킨다.
-        g->pacman.y_axis = CELL_SIZE/2;
-        g->pacman.x_axis = CELL_SIZE/2;
+	current_enemies_index = has_enemy_in_position(g, y_position, x_position); // 현재 위치에 적이 존재하는지 HasEnemyInPosition 함수로 확인.
 
-        //부딪힌 경우에는 멈춤 상태로 다시 변한다.
-        g->pacman.direction = PAUSE;
-        g->enemies_movement = PAUSE;
+	if (current_enemies_index >= 0)
+	{
+		g->coins[current_enemies_index].i = REMOVED; // 혼용 되는 값 정리
+		g->coins[current_enemies_index].j = REMOVED; // 혼용 되는 값 정리
+
+		g->lifes--;  //생명값 - 1
+
+		g->pacman.pacman_horizontal = CELL_SIZE / 2;
+		g->pacman.pacman_vertical = CELL_SIZE / 2;
+		//플레이어의 좌표값 초기화
+
+
+		g->pacman.direction = PAUSE;
+		g->enemies_movement = PAUSE;
+		//플레이어 및 적 움직임 비활성화.
 
         //진행상태에서 종료상태로 바꾸기 위한 포인터변수값 초기화.
         *flag = 0;
-    }
+	}
 }

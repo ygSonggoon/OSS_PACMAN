@@ -52,11 +52,11 @@ typedef struct Game
 } Game;
 
 void init_game(Game* g);
-int has_coin_in_pos(Game* g, int i, int j);
-int has_enemy_in_pos(Game* g, int i, int j);
+int has_coin_in_position(Game *g, int x_position, int y_position);
+int has_enemy_in_position(Game* g, int x_position, int y_position);
 void init_enemies(Game* g);
-void collision_coin_check(Game* g, int i, int j);
-void collision_enemy_check(Game* g, int i, int j);
+void collision_coin_check(Game* g, int y_position, int x_position);
+void collision_enemy_check(Game* g, int y_position, int x_position, int* flag);
 int collision_wall_check(Game* g, int i, int j);
 void move_enemies(Game* g);
 void move_pacman(Game* g);
