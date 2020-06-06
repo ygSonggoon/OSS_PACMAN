@@ -56,8 +56,20 @@ conio.c, conio2.h 라이브러리는 Windows API를 이용한 관계로 Windows 
 
 Platform: Windows
 
-### 3. 라이센스 / License
+## 3. 조작 방법 / How to Control
+
+W: Up
+
+S: Down
+
+A: Left
+
+D: Right
+
+## 4. 라이센스 / License
 
 GNU-GPL v3 License
 
 
+
+README 파일 markdown 형식으로 수정.
