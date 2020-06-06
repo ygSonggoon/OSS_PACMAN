@@ -51,6 +51,7 @@ typedef struct Game
     short int enemies_movement;
 } Game;
 
+void init_game(Game* game_data);
 int has_coin_in_pos(Game* g, int i, int j);
 int has_enemy_in_pos(Game* g, int i, int j);
 void init_enemies(Game* g);
