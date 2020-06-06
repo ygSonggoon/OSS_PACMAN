@@ -31,9 +31,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="conio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="conio2.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="pacman_header.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
