@@ -31,6 +31,31 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="CheckCoinCollision.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="CheckEnemyCollision.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="DrawScene.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="HasCoinInPosition.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="HasEnemyInPosition.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Header.h" />
+		<Unit filename="RenderPipeline.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="RenderScene.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="collision_wall_check.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="conio.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -38,7 +63,10 @@
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="pacman_header.h" />
+		<Unit filename="mapa.txt" />
+		<Unit filename="move_pacman.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
