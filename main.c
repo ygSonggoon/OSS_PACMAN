@@ -51,8 +51,8 @@ int main()
         collision_enemy_check(&j, j.pacman.y_axis, j.pacman.x_axis, &flag);
 
         //움직임 후 상태 변화
-        draw_scene(&j);
-        move_enemies(&j);
+        rendering_pipeline(&j);
+	move_enemies(&j);
         printf("Score: %d\nLifes: %d\n", j.score, j.lifes);
 
         //종료 조건.
