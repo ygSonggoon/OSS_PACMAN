@@ -4,74 +4,73 @@
 #include <windows.h>
 #include <time.h>
 
-#define MAPSIZE 13 
+#define CELL_SIZE 13
 #define WALL 'X'
-#define ROAD ' '
+#define BLANK ' '
+#define UP_MOVE 'w'
+#define DOWN_MOVE 's'
+#define LEFT_MOVE 'a'
+#define RIGHT_MOVE 'd'
+#define PAUSE 'p'
+#define MOVE_STATUS 'm'
+#define ENEMY_NUMBERS 4
+#define REMOVED -1
 
-#define UP 'w'
-#define DOWN 's'
-#define LEFT 'a'
-#define RIGHT 'd'
-#define DEACTIVE 'p'
-#define ACTIVE 'm'
-
-#define REMOVED -1 
-
-typedef struct map
+typedef struct Map
 {
-	char mapData[MAPSIZE][MAPSIZE];
-} Map; 
+    char MAP[CELL_SIZE][CELL_SIZE];
+} Map;
 
-typedef struct pacman
+typedef struct Pacman
 {
-	int i, j; 
-	char direction; 
-} Player; 
+    int pacman_vertical, pacman_horizontal;
+    char direction;
+} Pacman;
 
-typedef struct enemy
+typedef struct Enemy
 {
-	int i, j; 
-	char direction;
-} Enemy; 
+    int i, j;
+    char direction;
+} Enemy;
 
-typedef struct coin
+typedef struct Coin
 {
-	int i, j; 
-} Coin; 
+    int i, j;
+} Coin;
 
 typedef struct Game
 {
-	Map map; 
-	Player pacman; 
-	unsigned int score; 
-	Coin coins[MAPSIZE*MAPSIZE];
-	Enemy enemies[MAPSIZE*MAPSIZE]; 
-	unsigned int total_coins_number; 
-	unsigned short int life; 
-	short int enemyMovement; 
-} Game; r 
+    Map map;
+    Pacman pacman;
+    Coin coins[CELL_SIZE*CELL_SIZE];
+    Enemy enemies[CELL_SIZE*CELL_SIZE];
 
+    unsigned int score;
+    unsigned int total_coin_number;
+    unsigned short int lifes;
+    short int enemies_movement;
+} Game;
 
-void check_coin_collision(Game* game, int y_position, int x_position);
-void check_enemy_collision(Game* game, int y_position, int x_position);
-
-int has_coin_in_position(Game *game, int x_position, int y_position);
-int has_enemy_in_position(Game *game,int x_position, int y_position);
-
-void rendering_pipeline(Game *game);
-
-void init_scene(); 
-void flip_scene(); 
-void clear_scene(); 
-void release_scene(); 
-void print_scene(int y_position, int x_position, char* print_data);
-void set_color(unsigned short color);
-
-void draw_scene(Game* game);
-
-void init_game(Game* game);
-
+void init_game(Game* g);
+int has_coin_in_pos(Game* g, int i, int j);
+int has_enemy_in_pos(Game* g, int i, int j);
+void init_enemies(Game* g);
+void collision_coin_check(Game* g, int i, int j);
+void collision_enemy_check(Game* g, int i, int j);
 int collision_wall_check(Game* g, int i, int j);
 void move_enemies(Game* g);
 void move_pacman(Game* g);
 void change_direction(Game* g, char c);
+
+// 추가된 항목
+void renderling_pipeline(Game *g); //렌더링 하는 과정을 총괄하는 함수.
+
+void init_scene(); //화면 초기화 함수.
+void flip_scene(); //화면 바꾸어 줄 함수.
+void clear_scene(); //화면을 지워줄 함수.
+void release_scene(); //프로그램 종료 시 화면을 삭제하는 함수.
+void print_scene(int y_position, int x_position, char* print_data); //화면을 출력해 줄 함수.
+void set_color(unsigned short color); //문자의 색상을 지정해 줄 함수.
+
+void draw_scene(Game* g); //실제 렌더링 함수.
+
