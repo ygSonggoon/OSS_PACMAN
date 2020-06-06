@@ -3,11 +3,11 @@
 
 #include "Header.h"
 
-void rendering_pipeline(Game *game)
+void rendering_pipeline(Game *g)
 {
     clear_scene(); //콘솔 화면 정리.
 
-    draw_scene(game); //게임 화면 출력.
+    draw_scene(g); //게임 화면 출력.
 
     flip_scene(); //다음 콘솔 버퍼로 변경.
 }
